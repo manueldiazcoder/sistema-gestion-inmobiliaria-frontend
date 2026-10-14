@@ -19,15 +19,19 @@ export class LugaresService {
 
   async obtenerCoordenadasUsuario(): Promise<[number, number]> {
     return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(({ coords }) => {
-        this.coordenadas = [coords.latitude, coords.longitude];
-        resolve(this.coordenadas);
-      });
-      (error: any) => {
-        alert('No se pudo obtener la Geolocalizacion');
-        console.log(error);
-        reject();
-      };
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          this.coordenadas = [coords.latitude, coords.longitude];
+          resolve(this.coordenadas);
+        },
+        // Segundo argumento: se ejecuta si el navegador no da la ubicación
+        // (permiso denegado, sin GPS o sin conexión). Sin esto la promesa
+        // quedaria pendiente para siempre.
+        (error) => {
+          console.error('No se pudo obtener la geolocalizacion', error);
+          reject(error);
+        }
+      );
     });
   }
 }
